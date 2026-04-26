@@ -1,4 +1,4 @@
-# MOTIVEX
+# MOTIVEX - Developing
 
 A web-based HTS (Home Trading System) platform for Korean equities, US equities, cryptocurrency, and options — all in one place. Built on a microservices architecture with real-money trading as the target.
 
