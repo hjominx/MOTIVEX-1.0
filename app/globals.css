@@ -1,0 +1,204 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* HTS 전용 다크 테마 - 금융 플랫폼 최적화 */
+:root {
+  /* 다크 모드만 지원 - 트레이딩 플랫폼 표준 */
+  --background: oklch(0.11 0.005 260);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.14 0.005 260);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.16 0.005 260);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.65 0.2 250);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.2 0.005 260);
+  --secondary-foreground: oklch(0.9 0 0);
+  --muted: oklch(0.18 0.005 260);
+  --muted-foreground: oklch(0.6 0 0);
+  --accent: oklch(0.25 0.01 260);
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.22 0.01 260);
+  --input: oklch(0.18 0.005 260);
+  --ring: oklch(0.65 0.2 250);
+  
+  /* 트레이딩 전용 색상 */
+  --gain: oklch(0.7 0.18 145);
+  --gain-foreground: oklch(0.98 0 0);
+  --loss: oklch(0.6 0.22 25);
+  --loss-foreground: oklch(0.98 0 0);
+  --warning: oklch(0.75 0.15 85);
+  --warning-foreground: oklch(0.15 0 0);
+  
+  /* 차트 색상 */
+  --chart-1: oklch(0.65 0.2 250);
+  --chart-2: oklch(0.7 0.18 145);
+  --chart-3: oklch(0.6 0.22 25);
+  --chart-4: oklch(0.75 0.15 85);
+  --chart-5: oklch(0.65 0.15 300);
+  --chart-candle-up: oklch(0.65 0.2 145);
+  --chart-candle-down: oklch(0.55 0.22 25);
+  
+  /* 사이드바 */
+  --sidebar: oklch(0.09 0.005 260);
+  --sidebar-foreground: oklch(0.9 0 0);
+  --sidebar-primary: oklch(0.65 0.2 250);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.15 0.005 260);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.18 0.01 260);
+  --sidebar-ring: oklch(0.65 0.2 250);
+  
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --font-sans: 'Geist', 'Geist Fallback', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gain: var(--gain);
+  --color-gain-foreground: var(--gain-foreground);
+  --color-loss: var(--loss);
+  --color-loss-foreground: var(--loss-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-candle-up: var(--chart-candle-up);
+  --color-chart-candle-down: var(--chart-candle-down);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* 숫자 표시 최적화 */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
+
+/* 트레이딩 유틸리티 클래스 */
+@layer utilities {
+  .text-gain {
+    color: var(--gain);
+  }
+  
+  .text-loss {
+    color: var(--loss);
+  }
+  
+  .bg-gain {
+    background-color: var(--gain);
+  }
+  
+  .bg-loss {
+    background-color: var(--loss);
+  }
+  
+  .border-gain {
+    border-color: var(--gain);
+  }
+  
+  .border-loss {
+    border-color: var(--loss);
+  }
+  
+  /* 호가창 애니메이션 */
+  @keyframes flash-gain {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: oklch(0.7 0.18 145 / 0.3); }
+  }
+  
+  @keyframes flash-loss {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: oklch(0.6 0.22 25 / 0.3); }
+  }
+  
+  .flash-gain {
+    animation: flash-gain 0.3s ease-out;
+  }
+  
+  .flash-loss {
+    animation: flash-loss 0.3s ease-out;
+  }
+  
+  /* 실시간 틱 애니메이션 */
+  @keyframes pulse-gain {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes pulse-loss {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  .pulse-gain {
+    animation: pulse-gain 0.5s ease-in-out;
+  }
+  
+  .pulse-loss {
+    animation: pulse-loss 0.5s ease-in-out;
+  }
+}
