@@ -1,14 +1,66 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/security/rate-limit';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+const AUTH_FAILURE_MESSAGE = '요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.';
+
+function normalizeEmail(value: FormDataEntryValue | null): string {
+  return String(value ?? '').trim().toLowerCase();
+}
+
+function getStringValue(value: FormDataEntryValue | null): string {
+  return String(value ?? '').trim();
+}
+
+async function getClientIp(): Promise<string> {
+  const headerStore = await headers();
+  const forwarded = headerStore.get('x-forwarded-for');
+  if (!forwarded) return 'unknown';
+  return forwarded.split(',')[0]?.trim() || 'unknown';
+}
+
+function validateStrongPassword(password: string): string | null {
+  if (password.length < 8) {
+    return '비밀번호는 8자 이상이어야 합니다.';
+  }
+
+  const checks = [
+    /[A-Z]/.test(password),
+    /[a-z]/.test(password),
+    /\d/.test(password),
+    /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  ];
+
+  const passedRules = checks.filter(Boolean).length;
+  if (passedRules < 3) {
+    return '비밀번호는 대문자, 소문자, 숫자, 특수문자 중 3가지 이상을 포함해야 합니다.';
+  }
+
+  return null;
+}
+
 export async function signIn(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = normalizeEmail(formData.get('email'));
+  const password = getStringValue(formData.get('password'));
   
   if (!email || !password) {
     return { error: '이메일과 비밀번호를 입력해주세요.' };
+  }
+
+  const ip = await getClientIp();
+  const rateLimit = checkRateLimit({
+    key: `auth:signin:${ip}:${email}`,
+    limit: 10,
+    windowMs: 60_000,
+  });
+
+  if (!rateLimit.allowed) {
+    return {
+      error: `요청이 너무 많습니다. ${rateLimit.retryAfterSec}초 후 다시 시도해주세요.`,
+    };
   }
   
   const supabase = await createClient();
@@ -19,24 +71,18 @@ export async function signIn(formData: FormData) {
   });
   
   if (error) {
-    if (error.message.includes('Invalid login credentials')) {
-      return { error: '이메일 또는 비밀번호가 올바르지 않습니다.' };
-    }
-    if (error.message.includes('Email not confirmed')) {
-      return { error: '이메일 인증이 필요합니다. 이메일을 확인해주세요.' };
-    }
-    return { error: error.message };
+    return { error: AUTH_FAILURE_MESSAGE };
   }
   
   redirect('/trading');
 }
 
 export async function signUp(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
-  const fullName = formData.get('fullName') as string;
-  const phone = formData.get('phone') as string;
+  const email = normalizeEmail(formData.get('email'));
+  const password = getStringValue(formData.get('password'));
+  const confirmPassword = getStringValue(formData.get('confirmPassword'));
+  const fullName = getStringValue(formData.get('fullName'));
+  const phone = getStringValue(formData.get('phone'));
   const agreeTerms = formData.get('agreeTerms') === 'on';
   
   // 유효성 검사
@@ -48,18 +94,9 @@ export async function signUp(formData: FormData) {
     return { error: '비밀번호가 일치하지 않습니다.' };
   }
   
-  if (password.length < 8) {
-    return { error: '비밀번호는 8자 이상이어야 합니다.' };
-  }
-  
-  // 비밀번호 복잡성 검사
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password);
-  const hasNumbers = /\d/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
-  if (!(hasUpperCase && hasLowerCase && hasNumbers) && !hasSpecialChar) {
-    return { error: '비밀번호는 대문자, 소문자, 숫자를 포함하거나 특수문자를 포함해야 합니다.' };
+  const passwordError = validateStrongPassword(password);
+  if (passwordError) {
+    return { error: passwordError };
   }
   
   if (!agreeTerms) {
@@ -84,10 +121,10 @@ export async function signUp(formData: FormData) {
   });
   
   if (error) {
-    if (error.message.includes('already registered')) {
-      return { error: '이미 가입된 이메일입니다.' };
+    if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+      redirect('/auth/verify-email');
     }
-    return { error: error.message };
+    return { error: AUTH_FAILURE_MESSAGE };
   }
   
   redirect('/auth/verify-email');
@@ -100,10 +137,23 @@ export async function signOut() {
 }
 
 export async function resetPassword(formData: FormData) {
-  const email = formData.get('email') as string;
+  const email = normalizeEmail(formData.get('email'));
   
   if (!email) {
     return { error: '이메일을 입력해주세요.' };
+  }
+
+  const ip = await getClientIp();
+  const rateLimit = checkRateLimit({
+    key: `auth:reset-password:${ip}:${email}`,
+    limit: 5,
+    windowMs: 60_000,
+  });
+
+  if (!rateLimit.allowed) {
+    return {
+      error: `요청이 너무 많습니다. ${rateLimit.retryAfterSec}초 후 다시 시도해주세요.`,
+    };
   }
   
   const supabase = await createClient();
@@ -115,8 +165,8 @@ export async function resetPassword(formData: FormData) {
     redirectTo: `${redirectUrl}?next=/auth/update-password`,
   });
   
-  if (error) {
-    return { error: error.message };
+  if (error && !error.message.includes('not found')) {
+    return { error: AUTH_FAILURE_MESSAGE };
   }
   
   return { success: '비밀번호 재설정 링크를 이메일로 보냈습니다.' };
@@ -134,8 +184,9 @@ export async function updatePassword(formData: FormData) {
     return { error: '비밀번호가 일치하지 않습니다.' };
   }
   
-  if (password.length < 8) {
-    return { error: '비밀번호는 8자 이상이어야 합니다.' };
+  const passwordError = validateStrongPassword(password);
+  if (passwordError) {
+    return { error: passwordError };
   }
   
   const supabase = await createClient();
@@ -145,7 +196,7 @@ export async function updatePassword(formData: FormData) {
   });
   
   if (error) {
-    return { error: error.message };
+    return { error: AUTH_FAILURE_MESSAGE };
   }
   
   redirect('/trading');
