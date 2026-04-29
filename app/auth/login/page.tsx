@@ -65,7 +65,7 @@ export default function LoginPage() {
                     placeholder="name@example.com"
                     autoComplete="email"
                     required
-                    className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 placeholder:text-muted-foreground/50"
+                    className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
                       placeholder="비밀번호 입력"
                       autoComplete="current-password"
                       required
-                      className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 pr-11 placeholder:text-muted-foreground/50"
+                      className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 pr-11 placeholder:text-muted-foreground/50"
                     />
                     <button
                       type="button"

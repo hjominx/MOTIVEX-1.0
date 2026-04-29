@@ -73,7 +73,7 @@ export default function SignUpPage() {
                   <Input
                     name="fullName"
                     placeholder="홍길동"
-                    className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 placeholder:text-muted-foreground/50"
+                    className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -85,7 +85,7 @@ export default function SignUpPage() {
                     type="email"
                     placeholder="name@example.com"
                     required
-                    className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 placeholder:text-muted-foreground/50"
+                    className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -96,7 +96,7 @@ export default function SignUpPage() {
                     name="phone"
                     type="tel"
                     placeholder="010-0000-0000"
-                    className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 placeholder:text-muted-foreground/50"
+                    className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 placeholder:text-muted-foreground/50"
                   />
                 </div>
 
@@ -111,7 +111,7 @@ export default function SignUpPage() {
                       value={pw}
                       onChange={(e) => setPw(e.target.value)}
                       required
-                      className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 pr-11 placeholder:text-muted-foreground/50"
+                      className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 pr-11 placeholder:text-muted-foreground/50"
                     />
                     <button
                       type="button"
@@ -134,7 +134,7 @@ export default function SignUpPage() {
                           <div
                             key={idx}
                             className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                              check ? 'bg-gradient-primary' : 'bg-muted/50'
+                              check ? 'bg-gradient-primary shadow-sm shadow-primary/40' : 'bg-border'
                             }`}
                           />
                         ))}
@@ -153,10 +153,10 @@ export default function SignUpPage() {
                             }`}
                           >
                             <div
-                              className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                                 c.ok
                                   ? 'bg-gain border-gain'
-                                  : 'border-border'
+                                  : 'border-primary/30 bg-background'
                               }`}
                             >
                               {c.ok && (
@@ -179,7 +179,7 @@ export default function SignUpPage() {
                     type="password"
                     placeholder="비밀번호 재입력"
                     required
-                    className="h-11 text-sm bg-muted border-border rounded-lg focus:border-primary/50 focus:bg-background transition-all duration-300 placeholder:text-muted-foreground/50"
+                    className="h-11 text-sm bg-background border border-primary/20 rounded-lg focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 placeholder:text-muted-foreground/50"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function SignUpPage() {
                   className={`mt-1 w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all duration-300 ${
                     agreed
                       ? 'bg-gradient-primary border-primary shadow-lg shadow-primary/30'
-                      : 'border-border group-hover:border-primary/50'
+                      : 'border-primary/40 bg-background group-hover:border-primary/70 group-hover:shadow-md group-hover:shadow-primary/10'
                   }`}
                 >
                   {agreed && (
